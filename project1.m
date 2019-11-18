@@ -1,4 +1,4 @@
-function [yout,tout,params,F1,F2,F3] = Notch_lowstress_simulation(params)
+function [yout,tout,params,F1,F2,F3] = project1(params)
 
 prompt1 = 'Do you want to include stress (Y/N) \n';
 INPUT1 = input(prompt1, 's');
@@ -30,7 +30,7 @@ params.connectivity=getconnectivityM(HM,k,R);
 % setting the initial conditions + noise
 y0=getIC(params,k,betaD);
 HM = boundary(HM,R);
-BASE = 0; %Base for exponential relationship (larger base means more exponential)
+BASE = 5; %Base for exponential relationship (larger base means more exponential)
 [S,HM] = stressfunc(HM,R,BASE);
 
 % run simulation with lateral inhibition
@@ -434,7 +434,7 @@ for tind = 1:5:length(tout)   % shows every 5th frame
     frameind=frameind+1;
     F(frameind) = getframe; % generates a movie variable
 end
-movie2avi(F,'movielattice'); % save movie in avi format
+%movie2avi(F,'movielattice'); % save movie in avi format
 
 cellrad = []; 
 for k = 1:(2*R+1)
@@ -517,7 +517,7 @@ for tind = 1:5:length(tout)   % shows every 5th frame
     frameind=frameind+1;
     F(frameind) = getframe; % generates a movie variable
 end
-movie2avi(F,'movielattice2'); % save movie in avi format
+%movie2avi(F,'movielattice2'); % save movie in avi format
 
 function F=movielattice3(tout,yout,R,HM,k,INPUT1)
 figure('Name','Notch Cleavage (Repressor) Levels')
@@ -555,4 +555,8 @@ for tind = 1:5:length(tout)   % shows every 5th frame
     frameind=frameind+1;
     F(frameind) = getframe; % generates a movie variable
 end
-movie2avi(F,'movielattice3'); % save movie in avi format
+% % video=VideoWriter('movielattice3.avi');
+% % open(video);
+% % writeVideo(F, M);
+% close(video);
+% movie2avi(F,'movielattice3'); % save movie in avi format
