@@ -259,7 +259,7 @@ if i==1 || i==2*R+1
     y = HM(i,j,2);
     else 
         if i<R+1 % go up
-            for m=1:i-1;
+            for m=1:i-1
                 if HM(i-m,j,2) ~= 0
                     y = HM(i-m,j,2);
                 end
@@ -270,7 +270,7 @@ if i==1 || i==2*R+1
         end
 
         if i>R+1 % go down
-            for m=1:(2*R+1 - i);
+            for m=1:(2*R+1 - i)
                 if HM(i+m,j,2) ~= 0
                     y = HM(i+m,j,2);
                 end
@@ -288,7 +288,7 @@ if j==1 || j==2*R+1
     x = HM(i,j,3);
     else 
         if j>R+1 % go right
-            for n=1:(2*R+1 - j);
+            for n=1:(2*R+1 - j)
                 if HM(i,j+n,3) ~= 0
                     x = HM(i,j+n,3);
                 end
@@ -299,7 +299,7 @@ if j==1 || j==2*R+1
         end
 
         if j<R+1 % go left
-            for n=1:j-1; % the max distance to move left
+            for n=1:j-1 % the max distance to move left
                 if HM(i,j-n,3) ~= 0 % if a cell is found to the left
                     x = HM(i,j-n,3); % make x equal the x position of the barrier to the left
                 end
