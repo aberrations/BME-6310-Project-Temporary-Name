@@ -16,21 +16,7 @@ R = 6; % number of rings
 connmat = connectivityMatrix(hexmat, numCell, R);
 k = length(connmat);
 
-%% Overlay stress function on the hexagonal lattice
-hexmat = createBoundaryLayers(hexmat, R);
-
-% b = 0, 0.1, 10
-[ stressmat0, hexmat0 ] = stress(hexmat, R, 0);
-[ stressmat01, hexmat01 ] = stress(hexmat, R, 0.01);
-[ stressmat05, hexmat05 ] = stress(hexmat, R, 0.5);
-[ stressmat1, hexmat1 ] = stress(hexmat, R, 1);
-[ stressmat5, hexmat5 ] = stress(hexmat, R, 5);
-[ stressmat10, hexmat10 ] = stress(hexmat, R, 10);
-[ stressmat50, hexmat50 ] = stress(hexmat, R, 50);
-[ stressmat100, hexmat100 ] = stress(hexmat, R, 100);
-
 %% Initial conditions 
-%rng(123124);
 uniDist = rand(numCell, 1) - 1/2; % a uniform random distribution
 epsilon = 1e-5;   % multiplicative factor of Delta initial condition
 D0 = epsilon * betaD .* (1 + sigma*uniDist); % initial Delta levels 
@@ -39,15 +25,37 @@ N0 = betaN .* ones(numCell, 1);  % initial Notch levels are betaN
 y0 = [D0; R0; N0];  % vector of initial conditions
 
 %% Simulations
+%% Overlay stress function on the hexagonal lattice
+hexmat = createBoundaryLayers(hexmat, R);
 tspan = [0 100];
-[tout, yout0] = ode15s(@notchEq, tspan, y0, [], stressmat0, connmat);
-[tout, yout01] = ode15s(@notchEq, tspan, y0, [], stressmat01, connmat);
-[tout, yout1] = ode15s(@notchEq, tspan, y0, [], stressmat1, connmat);
-[tout, yout05] = ode15s(@notchEq, tspan, y0, [], stressmat05, connmat);
-[tout, yout5] = ode15s(@notchEq, tspan, y0, [], stressmat5, connmat);
-[tout, yout10] = ode15s(@notchEq, tspan, y0, [], stressmat10, connmat);
-[tout, yout50] = ode15s(@notchEq, tspan, y0, [], stressmat50, connmat);
-[tout, yout100] = ode15s(@notchEq, tspan, y0, [], stressmat100, connmat);
+xx = -1:0.1:1;
+figure;
+    
+% b = 0, 0.1, 10
+for i=[0 0.1 0.5 5 10]
+    [ stressmat0, hexmat0 ] = stress(hexmat, R, i);
+    [tout, yout0] = ode15s(@notchEq, tspan, y0, [], stressmat0, connmat);
+    [yyD, yyR] = normalizedValuesAsFuncRad(hexmat, yout0, R, k);
+    
+    subplot(1,2,1);
+    plot(xx, yyD);
+    hold on
+
+    subplot(1,2,2);
+    plot(xx, yyR);
+    hold on
+end
+
+hold off
+subplot(1,2,1);
+xticks(-1:0.5:1); title('Receptor');
+xlabel('Radius (dimensionless)'); ylabel('Normalized Concentration');
+legend(cellstr(num2str(([0 0.1 0.5 5 10])'))');
+
+subplot(1,2,2);
+xticks(-1:0.5:1); title('Signaling');
+xlabel('Radius (dimensionless)'); ylabel('Normalized Concentration');
+legend(cellstr(num2str(([0 0.1 0.5 5 10])'))');
 %yout1 = interp1(tout, yout0, 0:1:100);
 %F = movielattice(tout, yout0, R, hexmat0, k, 0.5);
 
